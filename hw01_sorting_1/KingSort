@@ -1,0 +1,152 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.StringTokenizer;
+
+public class KingSort {
+    public static final HashMap<Character, Integer> map = new HashMap<>() {{
+        put('I', 1);
+        put('V', 5);
+        put('X', 10);
+        put('L', 50);
+    }};
+
+    static class FastReader {
+        BufferedReader br;
+        StringTokenizer st;
+
+        public FastReader()
+        {
+            br = new BufferedReader(
+                    new InputStreamReader(System.in));
+        }
+
+        String next()
+        {
+            while (st == null || !st.hasMoreElements()) {
+                try {
+                    st = new StringTokenizer(br.readLine());
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return st.nextToken();
+        }
+
+        int nextInt() { return Integer.parseInt(next()); }
+
+        long nextLong() { return Long.parseLong(next()); }
+
+        double nextDouble()
+        {
+            return Double.parseDouble(next());
+        }
+
+        String nextLine()
+        {
+            String str = "";
+            try {
+                str = br.readLine();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            return str;
+        }
+    }
+
+    public static String compareNames(String name1, String name2) {
+        for (int i = 0; i < Math.min(name1.length(), name2.length()); i++) {
+            if (name1.charAt(i) < name2.charAt(i)) {
+                return "LESS";
+            }
+            else if (name1.charAt(i) > name2.charAt(i)) {
+                return "MORE";
+            }
+        }
+        if (name1.length() < name2.length())
+            return "LESS";
+        else if (name1.length() > name2.length())
+            return "MORE";
+        else
+            return "EQUAL";
+    }
+
+    public static int romanToDec(String num) {
+        int decNum = 0;
+        for (int i = 0; i < num.length(); i++) {
+            int num1 = map.get(num.charAt(i));
+            if (i + 1 < num.length()) {
+                int num2 =  map.get(num.charAt(i + 1));
+                if (num1 >= num2)
+                    decNum += num1;
+                else {
+                    decNum += num2 - num1;
+                    i++;
+                }
+            }
+            else {
+                decNum += num1;
+            }
+        }
+        return decNum;
+    }
+
+    public static String compareNumber(String num1, String num2) {
+        int numInt1 = romanToDec(num1);
+        int numInt2 = romanToDec(num2);
+        if (numInt1 < numInt2)
+            return "LESS";
+        else if (numInt1 > numInt2)
+            return "MORE";
+        else
+            return "EQUAL";
+    }
+
+    public static boolean isKing1Less(String king1, String king2) {
+        String[] kingArr1 = king1.split(" ");
+        String[] kingArr2 = king2.split(" ");
+
+        if (compareNames(kingArr1[0], kingArr2[0]).equals("LESS"))
+            return true;
+        else if (compareNames(kingArr1[0], kingArr2[0]).equals("MORE"))
+            return false;
+        else { // одинаковые имена
+            return compareNumber(kingArr1[1], kingArr2[1]).equals("LESS") || compareNumber(kingArr1[1], kingArr2[1]).equals("EQUAL");
+        }
+    }
+
+    public static void insertionSort(String[] values, int size) {
+        for (int i = 1; i < size; i++) {
+            int j = i - 1;
+            while (j >= 0 && !isKing1Less(values[j], values[j + 1])) {
+                swap(values, j, j + 1);
+                j--;
+            }
+        }
+    }
+
+
+    public static void swap(String[] array, int idx1, int idx2) {
+        String tmp = array[idx1];
+        array[idx1] = array[idx2];
+        array[idx2] = tmp;
+    }
+
+    public static void main(String... args) {
+        FastReader s = new FastReader();
+        int n = s.nextInt();
+        String[] values = new String[n];
+
+        for (int i = 0; i < n; i++) {
+            values[i] = s.nextLine();
+        }
+
+        insertionSort(values, n);
+
+        for (String val: values)
+            System.out.println(val);
+    }
+}
