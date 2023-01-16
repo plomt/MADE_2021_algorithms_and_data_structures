@@ -1,0 +1,100 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Rope {
+
+    public static final int MIN_ROPE_LENGTH = 1;
+
+    static class FastReader {
+        BufferedReader br;
+        StringTokenizer st;
+
+        public FastReader()
+        {
+            br = new BufferedReader(
+                    new InputStreamReader(System.in));
+        }
+
+        String next()
+        {
+            while (st == null || !st.hasMoreElements()) {
+                try {
+                    st = new StringTokenizer(br.readLine());
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return st.nextToken();
+        }
+
+        int nextInt() { return Integer.parseInt(next()); }
+
+        long nextLong() { return Long.parseLong(next()); }
+
+        double nextDouble()
+        {
+            return Double.parseDouble(next());
+        }
+
+        String nextLine()
+        {
+            String str = "";
+            try {
+                str = br.readLine();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            return str;
+        }
+    }
+
+    public static int binSearch(int[] values, int ropeLength, int k) {
+        int left = MIN_ROPE_LENGTH - 1; // так как (left, right]
+        int right = ropeLength + 1;
+
+        while (left < right - 1) {
+            int mid = (left + right) / 2;
+            if (function(values, mid, k)) {
+                left = mid;
+            }
+            else {
+                right = mid;
+            }
+        }
+        return left;
+    }
+
+    public static boolean function(int[] values, int lengthRope, int k) {
+        int cnt = 0;
+        for (int val: values) {
+            int tmp = val;
+            while (tmp >= lengthRope) {
+                tmp -= lengthRope;
+                cnt++;
+            }
+        }
+        return cnt >= k;
+    }
+
+    public static void main(String... args) {
+        FastReader reader = new FastReader();
+        int n = reader.nextInt();
+        int k = reader.nextInt();
+        int[] values = new int[n];
+        int maxLength = Integer.MIN_VALUE;
+
+        for (int i = 0; i < n; i++) {
+            int val = reader.nextInt();
+            if (val > maxLength) {
+                maxLength = val;
+            }
+            values[i] = val;
+        }
+
+        System.out.println(binSearch(values, maxLength, k));
+    }
+}
